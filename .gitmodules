@@ -1,3 +1,3 @@
-[submodule "Stryke"]
-	path = Stryke
-	url = https://github.com/edmBernard/Stryke.git
+[submodule "stryke"]
+	path = stryke
+	url = https://github.com/edmBernard/stryke.git

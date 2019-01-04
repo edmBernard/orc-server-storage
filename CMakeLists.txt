@@ -43,7 +43,7 @@ find_package(cxxopts CONFIG REQUIRED)
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Stryke/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/stryke/include)
 
 #**************************************************************************************************
 # Set variable ************************************************************************************

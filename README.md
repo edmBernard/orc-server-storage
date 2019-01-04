@@ -1,11 +1,12 @@
-# orc-server-storage
+# Stryke Server
 WIP: Small client/server to store data in [Orc](https://orc.apache.org/) file
+[Stryke Server](https://github.com/edmBernard/stryke-server) depend on [Stryke](https://github.com/edmBernard/stryke). Stryke is include as a submodule.
 
 ## Dependencies
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
-orc-server-storage depend on:
+stryke-server depend on:
 * [Apache-Orc](https://orc.apache.org/)
 * [uWebsockets](https://github.com/uNetworking/uWebSockets) (v0.14)
 * [nlohmann/json](https://github.com/nlohmann/json)
