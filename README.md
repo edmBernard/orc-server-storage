@@ -1,11 +1,11 @@
 # orc-server-storage
-WIP: Small client/server to store data in orc file
+WIP: Small client/server to store data in [Orc](https://orc.apache.org/) file
 
 ## Dependencies
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
-Stryke depend on:
+orc-server-storage depend on:
 * [Apache-Orc](https://orc.apache.org/)
 * [uWebsockets](https://github.com/uNetworking/uWebSockets) (v0.14)
 * [nlohmann/json](https://github.com/nlohmann/json)

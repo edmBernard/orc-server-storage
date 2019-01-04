@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) try {
   OrcWriterThread<OrcWriterMulti, TimestampNumber, Long, Long, Long, Long> writer({result["col0"].as<std::string>(), result["col1"].as<std::string>(), result["col2"].as<std::string>(), result["col3"].as<std::string>(), result["col4"].as<std::string>()}, result["dir"].as<std::string>(), result["prefix"].as<std::string>(), orc_options);
 
   // =================================================================================================
-  // Parse command line options
+  // Configure Http server
   Hub h;
 
   h.onHttpRequest([&](HttpResponse *res, HttpRequest req, char *data, size_t length, size_t remainingBytes) {
@@ -95,7 +95,6 @@ int main(int argc, char *argv[]) try {
         json message;
         try {
           message = json::parse(std::string(data, length));
-          std::cout << message.dump() << std::endl;
 
           if (!message.is_array()) {
             send_response_message(res, std::string("Data must be an array"));
@@ -123,6 +122,8 @@ int main(int argc, char *argv[]) try {
     return;
   });
 
+  // =================================================================================================
+  // Run Http server
   if (h.listen(result["port"].as<int>())) {
     std::cout << "Running ... (Press Ctrl+C to stop server, It will finalize last Orc file)" << std::endl;
     while (!gracefull_stop) {
