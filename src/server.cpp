@@ -28,7 +28,20 @@ void send_response_message(HttpResponse *res, std::string message) {
   res->end(message.data(), message.length());
 }
 
+std::atomic<bool> gracefull_stop = false;
+
+void gracefull_killer(int s){
+  gracefull_stop = true;
+}
+
 int main(int argc, char *argv[]) try {
+
+  struct sigaction sigIntHandler;
+  sigIntHandler.sa_handler = gracefull_killer;
+  sigemptyset(&sigIntHandler.sa_mask);
+  sigIntHandler.sa_flags = 0;
+  sigaction(SIGINT, &sigIntHandler, NULL);
+
   // =================================================================================================
   // Parse command line options
   cxxopts::Options options(argv[0], "A storage server for Orc file");
@@ -52,7 +65,7 @@ int main(int argc, char *argv[]) try {
 
   if (result.count("help")) {
     std::cout << options.help({""}) << std::endl;
-    exit(0);
+    return EXIT_SUCCESS;
   }
 
   // Get Port Parameter
@@ -72,7 +85,6 @@ int main(int argc, char *argv[]) try {
 
   // =================================================================================================
   // Parse command line options
-
   Hub h;
 
   h.onHttpRequest([&](HttpResponse *res, HttpRequest req, char *data, size_t length, size_t remainingBytes) {
@@ -112,9 +124,14 @@ int main(int argc, char *argv[]) try {
   });
 
   if (h.listen(result["port"].as<int>())) {
-    h.run();
+    std::cout << "Running ... (Press Ctrl+C to stop server, It will finalize last Orc file)" << std::endl;
+    while (!gracefull_stop) {
+      h.poll();
+    }
   }
+  return EXIT_SUCCESS;
+
 } catch (const cxxopts::OptionException &e) {
   std::cout << "Error parsing options: " << e.what() << std::endl;
-  exit(1);
+  return EXIT_FAILURE;
 }
