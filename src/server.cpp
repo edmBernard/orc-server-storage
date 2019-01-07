@@ -1,7 +1,7 @@
 //
-//  orc-server-storage
+//  stryke-server
 //
-//  https://github.com/edmBernard/orc-server-storage
+//  https://github.com/edmBernard/stryke-server
 //
 //  Created by Erwan BERNARD on 04/01/2019.
 //
@@ -30,7 +30,7 @@ void send_response_message(HttpResponse *res, std::string message) {
 
 std::atomic<bool> gracefull_stop = false;
 
-void gracefull_killer(int s){
+void gracefull_killer(int s) {
   gracefull_stop = true;
 }
 
@@ -128,8 +128,12 @@ int main(int argc, char *argv[]) try {
     std::cout << "Running ... (Press Ctrl+C to stop server, It will finalize last Orc file)" << std::endl;
     while (!gracefull_stop) {
       h.poll();
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   }
+
+  std::cout << "Stryke server is now ready to exit, bye bye..." << std::endl;
+
   return EXIT_SUCCESS;
 
 } catch (const cxxopts::OptionException &e) {
