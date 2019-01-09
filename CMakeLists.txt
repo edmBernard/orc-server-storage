@@ -69,10 +69,13 @@ add_executable("stryke_server" ${CMAKE_CURRENT_SOURCE_DIR}/src/server.cpp)
 target_compile_options("stryke_server" PRIVATE -O3)
 target_link_libraries("stryke_server" PRIVATE -lstdc++fs ${UWEBSOCKET_LIBRARY} OpenSSL::SSL OpenSSL::Crypto ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
 
-add_executable("stryke_client" ${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp)
-target_compile_options("stryke_client" PRIVATE -O3)
-target_link_libraries("stryke_client" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
+add_executable("stryke_client_thread" ${CMAKE_CURRENT_SOURCE_DIR}/src/client_thread.cpp)
+target_compile_options("stryke_client_thread" PRIVATE -O3)
+target_link_libraries("stryke_client_thread" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
 
+add_executable("stryke_client_basic" ${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp)
+target_compile_options("stryke_client_basic" PRIVATE -O3)
+target_link_libraries("stryke_client_basic" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
 
 
 #**************************************************************************************************
