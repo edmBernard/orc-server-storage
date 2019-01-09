@@ -87,36 +87,47 @@ int main(int argc, char *argv[]) try {
   // Configure Http server
   Hub h;
 
-  h.onHttpRequest([&](HttpResponse *res, HttpRequest req, char *data, size_t length, size_t remainingBytes) {
-    std::cout << "onHttpRequest" << std::endl;
-    res->httpSocket->setUserData(new std::string);
-    if (req.getMethod() == uWS::HttpMethod::METHOD_POST) {
-      if (!remainingBytes) {
-        json message;
-        try {
-          message = json::parse(std::string(data, length));
+  auto controlData = [&h, &writer, &result](uWS::HttpResponse *res, char *data, size_t length, size_t remainingBytes) {
+    std::string *buffer = (std::string *) res->httpSocket->getUserData();
+    buffer->append(data, length);
 
-          if (!message.is_array()) {
-            send_response_message(res, std::string("Data must be an array"));
-            return;
-          }
+    if (!remainingBytes) {
+      json message;
+      try {
+        message = json::parse(*buffer);
 
-          for (auto &&elem : message) {
-            writer.write(
-                elem[result["col0"].as<std::string>()].get<double>(),
-                elem[result["col1"].as<std::string>()].get<long>(),
-                elem[result["col2"].as<std::string>()].get<long>(),
-                elem[result["col3"].as<std::string>()].get<long>(),
-                elem[result["col4"].as<std::string>()].get<long>());
-          }
-
-        } catch (const json::exception &e) {
-          send_response_message(res, std::string("Error parsing json: ") + e.what());
+        if (!message.is_array()) {
+          send_response_message(res, std::string("Error: Data must be an array"));
           return;
         }
-        send_response_message(res, std::string("Data successfuly uploaded"));
+
+        for (auto &&elem : message) {
+          writer.write(
+              elem[result["col0"].as<std::string>()].get<double>(),
+              elem[result["col1"].as<std::string>()].get<long>(),
+              elem[result["col2"].as<std::string>()].get<long>(),
+              elem[result["col3"].as<std::string>()].get<long>(),
+              elem[result["col4"].as<std::string>()].get<long>());
+        }
+
+      } catch (const json::exception &e) {
+        send_response_message(res, std::string("Error: Error parsing json: ") + e.what());
         return;
       }
+      send_response_message(res, std::string("Data successfully uploaded"));
+      delete (std::string *) res->httpSocket->getUserData();
+    }
+  };
+
+  h.onHttpData([&controlData](uWS::HttpResponse *res, char *data, size_t length, size_t remainingBytes) {
+    controlData(res, data, length, remainingBytes);
+  });
+
+  h.onHttpRequest([&](HttpResponse *res, HttpRequest req, char *data, size_t length, size_t remainingBytes) {
+    res->httpSocket->setUserData(new std::string);
+    if (req.getMethod() == uWS::HttpMethod::METHOD_POST) {
+      controlData(res, data, length, remainingBytes);
+      return;
     }
     res->end(nullptr, 0);
     return;
