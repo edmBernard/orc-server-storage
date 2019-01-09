@@ -1,5 +1,5 @@
 # Stryke Server
-WIP: Small client/server to store data in [Orc](https://orc.apache.org/) file
+Small client/server to store data in [Orc](https://orc.apache.org/) file
 [Stryke Server](https://github.com/edmBernard/stryke-server) depend on [Stryke](https://github.com/edmBernard/stryke). Stryke is include as a submodule.
 
 ## Dependencies
@@ -11,21 +11,19 @@ stryke-server depend on:
 * [uWebsockets](https://github.com/uNetworking/uWebSockets) (v0.14)
 * [nlohmann/json](https://github.com/nlohmann/json)
 * [Catch2](https://github.com/catchorg/Catch2)
+* [Cpr](https://github.com/whoshuu/cpr)
 
 ```
-./vcpkg install orc uwebsockets nlohmann-json catch2 openssl
+./vcpkg install orc uwebsockets nlohmann-json catch2 openssl cpr
 ```
 
 ### Compile
-
-There is 1 options :
-* BUILD_UNIT_TESTS (default: OFF)
 
 ```bash
 mkdir build
 cd build
 # configure make with vcpkg toolchain
-cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake -DBUILD_UNIT_TESTS=ON
+cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
 make
 ```
 

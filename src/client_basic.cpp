@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) try {
   writeroptions.set_batch_size(result["batchsize"].as<int>());
 
   {
-    stryke::OrcWriterThread<stryke_client::OrcClient, double, long, long, long, long> writer(
+    stryke_client::OrcClient<double, long, long, long, long> writer(
       {
         result["col0"].as<std::string>(),
         result["col1"].as<std::string>(),

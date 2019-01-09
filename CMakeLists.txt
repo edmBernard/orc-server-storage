@@ -7,7 +7,12 @@ cmake_minimum_required(VERSION 3.5)
 
 if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0007 NEW)
 endif(COMMAND cmake_policy)
+
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
 
 #**************************************************************************************************
 # Find Package ************************************************************************************
@@ -65,38 +70,27 @@ add_compile_options(-std=c++17 -Wall -fPIC) # for all targets in current directo
 #**************************************************************************************************
 # Build Executable
 #**************************************************************************************************
-add_executable("stryke_server" ${CMAKE_CURRENT_SOURCE_DIR}/src/server.cpp)
-target_compile_options("stryke_server" PRIVATE -O3)
-target_link_libraries("stryke_server" PRIVATE -lstdc++fs ${UWEBSOCKET_LIBRARY} OpenSSL::SSL OpenSSL::Crypto ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+set(clients
+  client_thread
+  client_basic
+  client_cpr
+)
 
-add_executable("stryke_client_thread" ${CMAKE_CURRENT_SOURCE_DIR}/src/client_thread.cpp)
-target_compile_options("stryke_client_thread" PRIVATE -O3)
-target_link_libraries("stryke_client_thread" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
+foreach(client ${clients})
+  add_executable("stryke_${client}" ${CMAKE_CURRENT_SOURCE_DIR}/src/${client}.cpp)
+  target_compile_options("stryke_${client}" PRIVATE -O3)
+  target_link_libraries("stryke_${client}" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
+endforeach(client)
 
-add_executable("stryke_client_basic" ${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp)
-target_compile_options("stryke_client_basic" PRIVATE -O3)
-target_link_libraries("stryke_client_basic" PRIVATE -lstdc++fs -pthread ${CPR_LIBRARIES} ${CURL_LIBRARIES} OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
+set(servers
+  server_thread
+)
 
-
-#**************************************************************************************************
-# Build Tests
-#**************************************************************************************************
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-if(BUILD_UNIT_TESTS)
-  enable_testing()
-
-  SET(TEST_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/unit-main.cpp
-  )
-
-  add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
-  target_link_libraries(unit-test PRIVATE -lstdc++fs ${UWEBSOCKET_LIBRARY} OpenSSL::SSL OpenSSL::Crypto ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
-
-  add_test(NAME "unit_test_default"
-    COMMAND unit-test
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  )
-endif()
+foreach(server ${servers})
+  add_executable("stryke_${server}" ${CMAKE_CURRENT_SOURCE_DIR}/src/${server}.cpp)
+  target_compile_options("stryke_${server}" PRIVATE -O3)
+  target_link_libraries("stryke_${server}" PRIVATE -lstdc++fs ${UWEBSOCKET_LIBRARY} OpenSSL::SSL OpenSSL::Crypto ${ORC_LIBRARY} Snappy::snappy ZLIB::ZLIB protobuf::libprotoc protobuf::libprotobuf ${LZ4_LIBRARY} ${ZSTD_LIBRARY})
+endforeach(server)
 
 #**************************************************************************************************
 # Documentation generation
