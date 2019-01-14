@@ -12,7 +12,8 @@
 
 #include <cpr/cpr.h>
 #include <curl/curl.h>
-#include "stryke/core.hpp"
+#include "stryke/type.hpp"
+#include "stryke/options.hpp"
 #include "stryke/thread.hpp"
 #include "stryke_client/client.hpp"
 #include <cxxopts.hpp>

@@ -14,7 +14,8 @@
 #define STRYKE_CLIENT_HPP_
 
 
-#include "stryke/core.hpp"
+#include "stryke/type.hpp"
+#include "stryke/options.hpp"
 #include "nlohmann/json.hpp"
 #include <cmath>
 #include <filesystem>
